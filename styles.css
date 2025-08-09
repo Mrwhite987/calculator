@@ -10,7 +10,9 @@ div.display {
   width: 200px;
   text-align: right;
   padding: 5px 15px;
-  margin: 0 auto;
+  margin: 30px auto 15px auto;
+  height: 40px;
+  border-radius: 5px;
 }
 
 div.input {
@@ -21,15 +23,17 @@ div.input {
   padding: 5px 15px;
   justify-content: center;
   gap: 10px;
+  border-radius: 5px;
 }
 
 div.digits {
   /* height: 120px; */
-  width: 120px;
+  width: 130px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px;
+  padding: 10px;
 }
 
 div.digit {
