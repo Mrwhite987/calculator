@@ -2,6 +2,9 @@ let num1 = "";
 let operator = "";
 let num2 = "";
 let num1WithOperator = "";
+let operators = ["+", "-", "*", "/"];
+let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+let resultFlag = false;
 
 function add(a, b) {
   return a + b;
@@ -46,7 +49,12 @@ const digitButtons = document.querySelector("div.digits");
 
 digitButtons.addEventListener("click", function (e) {
   let content = e.target.textContent;
-  addContentToDisplay(content);
+  if (resultFlag == false) {
+    addContentToDisplay(content);
+  } else {
+    display.textContent = content;
+    resultFlag = false;
+  }
 });
 
 const display = document.querySelector("div.display");
@@ -60,18 +68,21 @@ const operatorButtons = document.querySelectorAll("div.operator");
 
 operatorButtons.forEach((operatorButton) => {
   operatorButton.addEventListener("click", function () {
-    if (/[+*/]|(?<!^)-/.test(display.textContent) && num1) {
+    resultFlag = false;
+    if (operator && num1 && num2) {
       evaluate();
+    } else if (operator && num1) {
+      display.textContent = num1WithOperator.replace(
+        operator,
+        operatorButton.textContent
+      );
       operator = operatorButton.textContent;
-      num1 = display.textContent;
-      addContentToDisplay(operator);
       num1WithOperator = display.textContent;
     } else {
       operator = operatorButton.textContent;
       num1 = display.textContent;
       addContentToDisplay(operator);
       num1WithOperator = display.textContent;
-      // console.log(`num1WithOperator=${num1WithOperator}`);
     }
   });
 });
@@ -86,7 +97,9 @@ function evaluate() {
   if (num1 && num2 && operator) {
     const result = formatNumber(operate(operator, num1, num2)).toString();
     display.textContent = result;
+
     reset();
+    resultFlag = true;
   } else {
     alert("Operator or number missing");
     reset();
@@ -126,6 +139,10 @@ deleteButton.addEventListener("click", deleteLastOfDisplay);
 function deleteLastOfDisplay() {
   const currentDisplay = display.textContent;
   const lastChar = currentDisplay.slice(-1);
+  if (operators.includes(lastChar)) {
+    operator = "";
+    num1WithOperator = "";
+  }
   const remainChars = currentDisplay.slice(0, -1);
   display.textContent = remainChars;
 }
