@@ -1,4 +1,7 @@
-let num1, operator, num2;
+let num1 = "";
+let operator = "";
+let num2 = "";
+let num1WithOperator = "";
 
 function add(a, b) {
   return a + b;
@@ -25,16 +28,16 @@ function divide(a, b) {
 function operate(operator, num1, num2) {
   switch (operator) {
     case "+":
-      return add(num1, num2);
+      return add(Number(num1), Number(num2));
       break;
     case "-":
-      return subtract(num1, num2);
+      return subtract(Number(num1), Number(num2));
       break;
     case "*":
-      return multiply(num1, num2);
+      return multiply(Number(num1), Number(num2));
       break;
     case "/":
-      return divide(num1, num2);
+      return divide(Number(num1), Number(num2));
       break;
   }
 }
@@ -43,7 +46,6 @@ const digitButtons = document.querySelector("div.digits");
 
 digitButtons.addEventListener("click", function (e) {
   let content = e.target.textContent;
-  console.log(content);
   addContentToDisplay(content);
 });
 
@@ -58,17 +60,18 @@ const operatorButtons = document.querySelectorAll("div.operator");
 
 operatorButtons.forEach((operatorButton) => {
   operatorButton.addEventListener("click", function () {
-    if (/[+*/]|(?<!^)-/.test(display.textContent)) {
+    if (/[+*/]|(?<!^)-/.test(display.textContent) && num1) {
       evaluate();
       operator = operatorButton.textContent;
-      num1 = Number(display.textContent);
+      num1 = display.textContent;
       addContentToDisplay(operator);
       num1WithOperator = display.textContent;
     } else {
       operator = operatorButton.textContent;
-      num1 = Number(display.textContent);
+      num1 = display.textContent;
       addContentToDisplay(operator);
       num1WithOperator = display.textContent;
+      // console.log(`num1WithOperator=${num1WithOperator}`);
     }
   });
 });
@@ -77,10 +80,18 @@ equalButton.addEventListener("click", evaluate);
 
 function evaluate() {
   const currentDisplay = display.textContent;
-  num2 = Number(currentDisplay.replace(num1WithOperator, ""));
-  const result = formatNumber(operate(operator, num1, num2)).toString();
-  display.textContent = result;
-  reset();
+  // console.log(num1WithOperator);
+  const num2 = currentDisplay.replace(num1WithOperator, "");
+
+  if (num1 && num2 && operator) {
+    const result = formatNumber(operate(operator, num1, num2)).toString();
+    display.textContent = result;
+    reset();
+  } else {
+    alert("Operator or number missing");
+    reset();
+    display.textContent = "";
+  }
 }
 
 function formatNumber(num) {
@@ -94,7 +105,7 @@ const clearButton = document.querySelector("div.clear");
 
 clearButton.addEventListener("click", function () {
   const confirmClear = prompt(
-    "Are you sure of clearing everything and start fresh? Y for yes!",
+    "Y for clearing everything and starting fresh!",
     "Y"
   );
   if (confirmClear.toLocaleLowerCase() == "y") {
@@ -104,7 +115,17 @@ clearButton.addEventListener("click", function () {
 });
 
 function reset() {
-  operator = undefined;
-  num1 = undefined;
-  num2 = undefined;
+  operator = "";
+  num1 = "";
+  num2 = "";
+}
+
+const deleteButton = document.querySelector("div.backspace");
+deleteButton.addEventListener("click", deleteLastOfDisplay);
+
+function deleteLastOfDisplay() {
+  const currentDisplay = display.textContent;
+  const lastChar = currentDisplay.slice(-1);
+  const remainChars = currentDisplay.slice(0, -1);
+  display.textContent = remainChars;
 }
